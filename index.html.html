@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>feb14 ahh</title>
+    <!-- Importing the 'Kalam' font for a handwritten look -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+          
+             input, textarea { caret-color: transparent; }
+        /* --- General Reset and Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kalam', cursive;
+            background-color: #fce4ec; /* Soft pink background */
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- Background Floating Elements (Subtle & Sweet) --- */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-item {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-10vh) rotate(360deg); }
+        }
+
+        /* --- Sections Management --- */
+        .section {
+            display: none; /* Hidden by default */
+            width: 100%;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            transition: opacity 1s ease;
+            z-index: 10;
+        }
+
+        .active {
+            display: flex;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- SECTION 1: The Envelope --- */
+        #envelope-section {
+            background-color: #f8bbd0;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.5s;
+        }
+        
+        .envelope-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: #d32f2f; /* Red */
+            border: 4px solid white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Envelope Flap Triangle */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 146px solid transparent;
+            border-right: 146px solid transparent;
+            border-top: 120px solid #e53935; /* Slightly lighter red for contrast */
+            transform-origin: top;
+            transition: transform 1s ease-in-out;
+            z-index: 2;
+        }
+
+        .envelope.open::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        /* The Heart Seal Button */
+        .heart-seal {
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            position: absolute;
+            top: 35%;
+            z-index: 3;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 24px;
+            color: #d32f2f;
+            cursor: pointer;
+            transition: opacity 0.5s;
+        }
+
+        .heart-seal::after {
+            content: '❤';
+        }
+
+        /* Paper sliding out animation */
+        .letter-preview {
+            position: absolute;
+            top: 10px;
+            width: 260px;
+            height: 180px;
+            background: #fff;
+            transition: transform 1s ease-in-out 0.8s; /* Delayed until flap opens */
+            z-index: 1;
+            padding: 10px;
+            font-size: 8px;
+            color: #ccc;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .envelope.open .letter-preview {
+            transform: translateY(-100px);
+        }
+
+        .click-hint {
+            margin-top: 40px;
+            color: #880e4f;
+            font-weight: bold;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- SECTION 2 & 3: Letter & Poem Paper --- */
+        .paper-container {
+            background-color: #fff;
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            /* Lined paper effect */
+            background-image: repeating-linear-gradient(transparent, transparent 31px, #e1e1e1 31px, #e1e1e1 32px);
+            line-height: 32px;
+        }
+
+        /* Decorative Tape */
+        .tape {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background-color: rgba(255, 182, 193, 0.6);
+            border-left: 2px dashed rgba(0,0,0,0.1);
+            border-right: 2px dashed rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Doodle/Stamp Decorations */
+        .doodle {
+            position: absolute;
+            width: 60px;
+            opacity: 0.8;
+        }
+        .doodle-tr { top: 10px; right: 10px; transform: rotate(15deg); }
+        .doodle-bl { bottom: 10px; left: 10px; transform: rotate(-10deg); }
+
+        h2 {
+            text-align: center;
+            color: #d81b60;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        p {
+            font-size: 1.3rem;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+
+        /* --- Navigation Buttons (Heart with Arrow) --- */
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s;
+            color: #d81b60;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .heart-icon {
+            font-size: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .arrow-icon {
+            font-size: 1.5rem;
+            margin-top: -10px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(5px); }
+        }
+
+        /* --- SECTION 4: Final Reveal --- */
+        #final-section {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            text-align: center;
+        }
+
+        .big-text {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #c2185b;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+            animation: popIn 1s ease-out;
+            padding: 20px;
+            border: 5px solid white;
+            background: rgba(255,255,255,0.4);
+            border-radius: 20px;
+        }
+        
+        .sub-text {
+            font-size: 1.5rem;
+            color: #880e4f;
+            margin-top: 20px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        
+        /* Mobile adjustment */
+        @media (max-width: 600px) {
+            .paper-container {
+                width: 95%;
+                padding: 25px;
+            }
+            .big-text {
+                font-size: 2.5rem;
+            }
+            p {
+                font-size: 1.1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Moving Background Elements (Clouds/Hearts/Sparkles) -->
+    <div class="bg-elements">
+        <!-- Javascript will populate this with SVGs -->
+    </div>
+
+    <!-- === SECTION 1: THE ENVELOPE === -->
+    <div id="envelope-section" class="section active">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="envelope" id="envelope">
+                <div class="letter-preview">
+                    <!-- Just lines to look like text -->
+                    <div style="width:100%; height: 2px; background:#ddd; margin: 5px 0;"></div>
+                    <div style="width:100%; height: 2px; background:#ddd; margin: 5px 0;"></div>
+                    <div style="width:80%; height: 2px; background:#ddd; margin: 5px 0;"></div>
+                </div>
+                <div class="heart-seal" id="seal"></div>
+            </div>
+        </div>
+        <div class="click-hint">Click the heart to open</div>
+    </div>
+
+    <!-- === SECTION 2: THE LETTER === -->
+    <div id="letter-section" class="section">
+        <div class="paper-container">
+            <div class="tape"></div>
+            
+            <!-- Cute corner doodle (SVG) -->
+            <svg class="doodle doodle-tr" viewBox="0 0 100 100" fill="none" stroke="#ff80ab" stroke-width="3">
+                <path d="M50 20 Q60 5 75 20 T90 40 Q95 60 70 80 Q50 90 30 80 Q5 60 10 40 T25 20 Q40 5 50 20"/>
+            </svg>
+
+            <!-- EDIT YOUR LETTER TITLE HERE -->
+            <h2>Hi Cassey,</h2>
+            
+            <!-- EDIT YOUR LETTER CONTENT HERE -->
+            <p>
+                I’ve been wanting to make a move on you for quite some time now, and I think this Valentine’s Day is finally the right moment for me to do it. I’ve gone back and forth on whether I should say something, but I realized I don’t want to keep this to myself anymore. So here’s a small Valentine’s letter I made just for you.
+            </p>
+            <p>
+                I just want you to know that I truly admire you, and I’ve secretely felt this way for a while now. You may not realize it, but you are genuinely so attractive. You’re beautiful in every sense, not just on the outside, but in your heart and mind as well. Believe me when I say God really took His time with you. Every little thing about you feels intentional, natural, and so pure, and I cannot help but admire the person you are.
+            </p>
+            <p>
+                You’re funny without even trying, smart in an effortless way, and talented in ways that leave me captivated. I have never felt like this about anyone before, and I did not think I would ever gather the courage to express it. But I could not let this Valentine’s pass without telling you even a fraction of how much I've been allured by your beauty.
+            </p>
+            <p>
+                I also wrote a poem for you. If you’re curious, just click the heart.
+            </p>
+            <p style="text-align: right;">
+                Sincerely,<br>Your secret admirer/Batman
+            </p>
+
+            <button class="nav-btn" onclick="nextPage('poem-section')">
+                <span class="heart-icon">❤</span>
+                <span class="arrow-icon">↓</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- === SECTION 3: THE POEM === -->
+    <div id="poem-section" class="section">
+        <div class="paper-container" style="background-color: #fffaf0;"> <!-- Slightly cream paper -->
+            <div class="tape" style="background-color: rgba(176, 224, 230, 0.6);"></div> <!-- Blue tape -->
+
+             <!-- Cute corner doodle (SVG) -->
+             <svg class="doodle doodle-bl" viewBox="0 0 100 100" fill="none" stroke="#80deea" stroke-width="3">
+                <circle cx="50" cy="50" r="30" />
+                <path d="M50 20 L50 80 M20 50 L80 50" />
+            </svg>
+
+            <!-- EDIT YOUR POEM TITLE HERE -->
+            <h2>A Little Poem</h2>
+            
+            <!-- EDIT YOUR POEM CONTENT HERE -->
+            <p style="text-align: center; font-style: italic;">
+                Roses are red,<br>
+                Violets are blue,<br>
+                My world is better,<br>
+                Because of you.
+            </p>
+            <p style="text-align: center; font-style: italic;">
+                Your laugh is a song,<br>
+                Your smile is a light,<br>
+                Thinking of you,<br>
+                Makes everything right.
+            </p>
+
+            <button class="nav-btn" onclick="nextPage('final-section')">
+                <span class="heart-icon">❤</span>
+                <span class="arrow-icon">↓</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- === SECTION 4: FINAL REVEAL === -->
+    <div id="final-section" class="section">
+        <div class="big-text">
+            Happy Valentine's Day!
+        </div>
+        <div class="sub-text">
+            (Hope this made you smile!)
+        </div>
+        
+        <!-- Decorative SVG Hearts below text -->
+        <div style="margin-top: 30px;">
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="#e91e63">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Background Generation ---
+        const bgContainer = document.querySelector('.bg-elements');
+        const icons = ['❤', '☁', '✨', '🌸']; // Heart, Cloud, Sparkle, Flower
+        const colors = ['#f48fb1', '#ce93d8', '#ffcc80', '#90caf9'];
+
+        for (let i = 0; i < 20; i++) {
+            const el = document.createElement('div');
+            el.classList.add('floating-item');
+            el.innerText = icons[Math.floor(Math.random() * icons.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            el.style.color = colors[Math.floor(Math.random() * colors.length)];
+            bgContainer.appendChild(el);
+        }
+
+        // --- 2. Envelope Animation ---
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const seal = document.getElementById('seal');
+            
+            // 1. Fade out seal
+            seal.style.opacity = '0';
+            
+            // 2. Open flap (CSS transition handles this via class)
+            setTimeout(() => {
+                envelope.classList.add('open');
+            }, 300);
+
+            // 3. Wait for animation, then transition page
+            setTimeout(() => {
+                nextPage('letter-section');
+            }, 2000);
+        }
+
+        // --- 3. Page Transition Logic ---
+        function nextPage(nextSectionId) {
+            // Hide current active section
+            const current = document.querySelector('.section.active');
+            current.style.opacity = '0'; // Fade out effect
+            
+            setTimeout(() => {
+                current.classList.remove('active');
+                current.style.display = 'none';
+                
+                // Show next section
+                const next = document.getElementById(nextSectionId);
+                next.style.display = 'flex';
+                // Trigger reflow
+                void next.offsetWidth; 
+                next.classList.add('active');
+                next.style.opacity = '1';
+                
+                // Scroll to top just in case
+                window.scrollTo(0,0);
+            }, 1000); // Wait 1s for fade out
+        }
+    </script>
+</body>
+</html>
